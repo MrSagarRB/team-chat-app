@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.test {
+  border: 1px solid red;
+}
+.test2 {
+  border: 1px solid blue;
+}
+
+.custom-border-1 {
+  box-shadow: inset 0px -1px 0px #e5e5ea;
+}
+.custom-border-2 {
+  box-shadow: inset 0px 1px 0px #e5e5ea;
+}
+.custom-px {
+  padding: 0 20px;
+}
+
+.reply {
+  float: right;
+  margin-left: 100px;
+  padding: 4px 8px;
+  background: #007aff;
+  border-radius: 6px 0px 0px 6px;
+  color: #ffffff;
+}
+
+.recived {
+  float: left;
+  margin-right: 100px;
+  border-radius: 0px 6px 6px 0px;
+  background: #f2f2f7;
+  padding: 4px 8px;
+  color: #2c2c2e;
+}
+
+::-webkit-scrollbar {
+  width: 0; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
+}
