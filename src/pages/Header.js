@@ -1,30 +1,34 @@
-import React from "react";
+import React, { useContext } from "react";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
+import { GoogleAuthProvider, signInWithRedirect, signOut } from "firebase/auth";
+import { auth } from "../firebase-config";
+import { ContextProvider } from "../Context";
 
 const Header = () => {
+  let { user, loading, error, apiBaseUrl, chatMsg } =
+    useContext(ContextProvider);
+
+  let singOutUser = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        console.log("Logged out");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
+  console.log(user.photoURL);
   return (
     <div className="custom-border-1 h-full w-full flex justify-between items-center custom-px">
       <div>
-        {" "}
-        <AvatarGroup>
-          <Avatar
-            alt="Remy Sharp"
-            src="/static/images/avatar/1.jpg"
-            sx={{ width: 35, height: 35 }}
-          />
-          <Avatar
-            alt="Travis Howard"
-            src="/static/images/avatar/2.jpg"
-            sx={{ width: 35, height: 35 }}
-          />
-          <Avatar
-            alt="Agnes Walker"
-            src="/static/images/avatar/4.jpg"
-            sx={{ width: 35, height: 35 }}
-          />
-        </AvatarGroup>
+        <Avatar
+          alt="Remy Sharp"
+          src={user.photoURL}
+          sx={{ width: 35, height: 35 }}
+        />
       </div>
       <div className="flex flex-col items-center justify-center">
         <p className="text-[14px] font-[600] text-[#2C2C2E]">
@@ -37,7 +41,10 @@ const Header = () => {
         </p>
       </div>
       <div>
-        <MoreHorizIcon className="text-[#666668]" />
+        <MoreHorizIcon
+          className="text-[#666668]"
+          onClick={() => singOutUser()}
+        />
       </div>
     </div>
   );

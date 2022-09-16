@@ -1,10 +1,13 @@
 import React from "react";
-import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
+import Context from "./Context";
 
 const App = () => {
   return (
-    <div className="h-screen w-full md:w-[500px] flex items-center justify-center ml-auto mr-auto md:border">
-      <Dashboard />
+    <div className="h-screen w-full ">
+      <Context>
+        <Home />
+      </Context>
     </div>
   );
 };

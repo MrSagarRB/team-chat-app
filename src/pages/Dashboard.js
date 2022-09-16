@@ -1,84 +1,84 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Header from "./Header";
 import SentimentSatisfiedOutlinedIcon from "@mui/icons-material/SentimentSatisfiedOutlined";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
+import { ContextProvider } from "../Context";
+import { async } from "@firebase/util";
 import Axios from "axios";
 
 const Dashboard = () => {
-  let [msg, setMsg] = useState("");
-  let [viewMsg, setViewMsg] = useState();
-  const messagesEndRef = useRef(null);
-  let base = "https://team-chat-app-backend.vercel.app";
+  let { user, loading, error, apiBaseUrl, chatMsg } =
+    useContext(ContextProvider);
 
-  let userName = "Nitin";
+  let [msg, setMsg] = useState();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const bottomRef = useRef(null);
 
   let handelInputChange = (e) => {
-    setMsg({ ...msg, senderName: userName, messageContent: e.target.value });
+    setMsg({
+      ...msg,
+      senderName: user.displayName,
+      messageContent: e.target.value,
+    });
   };
 
   let handelSendMessage = async () => {
-    await Axios.post(`${base}/api/sendMessage`, msg).then((result) => {
-      console.log(result.data);
+    await Axios.post(`${apiBaseUrl}/api/sendMessage`, msg).then((result) => {
+      // console.log(result.data);
+      setMsg({
+        ...msg,
+        messageContent: "",
+      });
+      scrollDown();
     });
+    // console.log(msg)
   };
 
-  let handelGetMessages = async () => {
-    await Axios.get(`${base}/api/getAllMessages`).then((result) => {
-      setViewMsg(result.data);
-    });
+  let scrollDown = () => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  useEffect(() => {
-    handelGetMessages();
-    scrollToBottom();
-  }, [viewMsg]);
+
+  scrollDown();
 
   return (
-    <div className=" h-full w-full ">
+    <div className=" h-full w-full md:w-[500px] md:border">
       <div className=" h-[10%] w-full ">
         <Header />
       </div>
       <div className="flex flex-col gap-5 h-[80%] w-full py-10 px-5 overflow-y-scroll scroll-smooth pb-[50px]">
-        {viewMsg?.map((item, index) => {
+        {chatMsg?.map((item, index) => {
           return (
             <div
               className={`${
-                item.senderName === userName ? "reply" : "recived"
+                item.senderName === user.displayName ? "reply" : "recived"
               } `}
               key={index}
             >
               {" "}
               <h1 className="text-[14px] font-[600]">
-                {item.senderName === userName ? "" : item.senderName}{" "}
+                {item.senderName === user.displayName ? "" : item.senderName}{" "}
               </h1>
               <p className="text-[14px] font-[400]">{item.messageContent}</p>
-              <div ref={messagesEndRef} />
             </div>
           );
         })}
+
+        <div ref={bottomRef} />
       </div>
 
       <div className=" h-[10%] flex items-center justify-between gap-5 custom-border-2 py-2 px-5">
         <SentimentSatisfiedOutlinedIcon />
         <input
-          onChange={(e) => {
-            handelInputChange(e);
-          }}
+          value={msg?.messageContent}
+          onChange={(e) => handelInputChange(e)}
+          id="msgInput"
           type="text"
           placeholder="Start typing..."
           className="outline-none w-full h-full "
         />
         <AttachmentOutlinedIcon />
-        <button
-          disabled={msg?.messageContent === ""}
-          onClick={() => {
-            handelSendMessage();
-          }}
-        >
+        <button onClick={() => handelSendMessage()}>
           <SendOutlinedIcon />
         </button>
       </div>
