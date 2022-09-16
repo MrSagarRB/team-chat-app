@@ -20,7 +20,7 @@ const Header = () => {
         // An error happened.
       });
   };
-  console.log(user.photoURL);
+
   return (
     <div className="custom-border-1 h-full w-full flex justify-between items-center custom-px">
       <div>
