@@ -23,7 +23,8 @@ const Dashboard = () => {
     });
   };
 
-  let handelSendMessage = async () => {
+  let handelSendMessage = async (e) => {
+    e.preventDefault();
     await Axios.post(`${apiBaseUrl}/api/sendMessage`, msg).then((result) => {
       // console.log(result.data);
       setMsg({
@@ -66,22 +67,23 @@ const Dashboard = () => {
 
         <div ref={bottomRef} />
       </div>
-
-      <div className=" h-[10%] flex items-center justify-between gap-5 custom-border-2 py-2 px-5">
-        <SentimentSatisfiedOutlinedIcon />
-        <input
-          value={msg?.messageContent}
-          onChange={(e) => handelInputChange(e)}
-          id="msgInput"
-          type="text"
-          placeholder="Start typing..."
-          className="outline-none w-full h-full "
-        />
-        <AttachmentOutlinedIcon />
-        <button onClick={() => handelSendMessage()}>
-          <SendOutlinedIcon />
-        </button>
-      </div>
+      <form onSubmit={handelSendMessage}>
+        <div className=" h-[10%] flex items-center justify-between gap-5 custom-border-2 py-2 px-5">
+          <SentimentSatisfiedOutlinedIcon />
+          <input
+            value={msg?.messageContent}
+            onChange={(e) => handelInputChange(e)}
+            id="msgInput"
+            type="text"
+            placeholder="Start typing..."
+            className="outline-none w-full h-full "
+          />
+          <AttachmentOutlinedIcon />
+          <button type="submit">
+            <SendOutlinedIcon />
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

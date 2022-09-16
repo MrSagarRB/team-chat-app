@@ -31,10 +31,7 @@ const Header = () => {
         />
       </div>
       <div className="flex flex-col items-center justify-center">
-        <p className="text-[14px] font-[600] text-[#2C2C2E]">
-          {" "}
-          🦄 Team Unicorns
-        </p>
+        <p className="text-[14px] font-[600] text-[#2C2C2E]"> 🦄 Team Mirats</p>
         <p className="text-[#666668] font-[400] text-[12px]">
           {" "}
           last seen 45 minutes ago
