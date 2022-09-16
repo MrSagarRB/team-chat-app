@@ -79,7 +79,7 @@ const Dashboard = () => {
             className="outline-none w-full h-full "
           />
           <AttachmentOutlinedIcon />
-          <button type="submit">
+          <button type="submit" disabled={!msg?.messageContent}>
             <SendOutlinedIcon />
           </button>
         </div>
