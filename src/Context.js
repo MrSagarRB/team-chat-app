@@ -9,7 +9,7 @@ const Context = ({ children }) => {
   const [chatMsg, setChatMsg] = useState();
   const bottomRef = useRef(null);
 
-  let apiBaseUrl = "http://localhost:3001";
+  let apiBaseUrl = "https://team-chat-app-backend.vercel.app";
 
   useEffect(() => {
     let handelGetMessages = async () => {
