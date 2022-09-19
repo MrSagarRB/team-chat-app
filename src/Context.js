@@ -12,7 +12,7 @@ const Context = ({ children }) => {
   let apiBaseUrl = "https://team-chat-app-backend.vercel.app";
   let handelGetMessages = async () => {
     await Axios.get(`${apiBaseUrl}/api/getAllMessages`).then((result) => {
-      setChatMsg(result.data);
+      setChatMsg(result.data).then((result) => {});
     });
   };
 

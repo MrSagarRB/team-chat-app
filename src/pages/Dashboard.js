@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import SentimentSatisfiedOutlinedIcon from "@mui/icons-material/SentimentSatisfiedOutlined";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
@@ -10,6 +10,8 @@ import { storage } from "../firebase-config";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 import { useFileUpload } from "use-file-upload";
 import { Modal, useModal } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 
 const Dashboard = () => {
   let { user, loading, error, apiBaseUrl, chatMsg, handelGetMessages } =
@@ -68,12 +70,16 @@ const Dashboard = () => {
 
   console.log(msg?.imgUrl);
 
+  useEffect(() => {
+    scrollDown();
+  }, [chatMsg]);
+
   return (
     <div className=" h-full w-full md:w-[500px] md:border">
       <div className=" h-[10%] w-full ">
         <Header />
       </div>
-      <div className="flex flex-col gap-5 h-[80%] w-full py-10 px-5 overflow-x-scroll scroll-smooth pb-[50px]">
+      <div className="flex flex-col gap-5 h-[80%] w-full py-10 px-5 overflow-x-hidden overflow-y-scroll scroll-smooth pb-[50px]">
         {chatMsg?.map((item, index) => {
           return (
             <div
@@ -117,28 +123,28 @@ const Dashboard = () => {
                   </div>
                 ) : null}
                 {file ? (
-                  <button
+                  <Button
                     onClick={() => {
                       handelUploadFile();
                     }}
                   >
                     Upload File
-                  </button>
+                  </Button>
                 ) : (
-                  <button
+                  <Button
                     onClick={() => {
                       selectFile();
                     }}
                   >
                     Select File
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
           </Modal>
         </div>
         <div>
-          {file && (
+          {/* {file && (
             <div>
               <img
                 src={file.source}
@@ -147,7 +153,7 @@ const Dashboard = () => {
                 width="200px"
               />
             </div>
-          )}
+          )} */}
         </div>
         <div ref={bottomRef} />
       </div>
@@ -166,7 +172,17 @@ const Dashboard = () => {
             placeholder="Start typing..."
             className="outline-none w-full h-full"
           />
-          <AttachmentOutlinedIcon onClick={() => setVisible(true)} />
+          <div className="relative">
+            {file && (
+              <span className="absolute bottom-4 text-red-500 border px-[8px] rounded-full animate-bounce">
+                1
+              </span>
+            )}
+            <AttachmentOutlinedIcon
+              onClick={() => setVisible(true)}
+              className={`${file && "text-blue-400"}`}
+            />
+          </div>
           <button type="submit">
             <SendOutlinedIcon />
           </button>
