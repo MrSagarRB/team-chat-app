@@ -18,7 +18,7 @@ const Context = ({ children }) => {
 
   useEffect(() => {
     handelGetMessages();
-  }, []);
+  }, [chatMsg]);
 
   return (
     <ContextProvider.Provider
