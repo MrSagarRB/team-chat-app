@@ -8,33 +8,23 @@ import { async } from "@firebase/util";
 import Axios from "axios";
 import { storage } from "../firebase-config";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { useFileUpload } from "use-file-upload";
+import { Modal, useModal } from "@nextui-org/react";
 
 const Dashboard = () => {
-  let { user, loading, error, apiBaseUrl, chatMsg } =
+  let { user, loading, error, apiBaseUrl, chatMsg, handelGetMessages } =
     useContext(ContextProvider);
-
-  let [msg, setMsg] = useState();
-  let [file, setFile] = useState();
-  let [fileCount, setFileCount] = useState(2);
+  const [file, selectFile] = useFileUpload();
   let [allFiles, setAllFiles] = useState([]);
 
-  const bottomRef = useRef(null);
+  const { setVisible, bindings } = useModal();
   let storageUploadRef = ref(storage, `files/file${allFiles.length + 1}`);
+
   let allFileRef = ref(storage, `files`);
 
-  let handleFileChange = (e) => {
-    // console.log(e.target.files[0]);
-    setFile(e.target.files[0]);
-  };
-  let handelUploadFile = async () => {
-    uploadBytes(storageUploadRef, file);
-    const url = await getDownloadURL(storageUploadRef);
-    setMsg({
-      ...msg,
-      imgUrl: url,
-    });
-    console.log(url);
-  };
+  let [msg, setMsg] = useState();
+
+  const bottomRef = useRef(null);
 
   let handelInputChange = (e) => {
     setMsg({
@@ -44,18 +34,30 @@ const Dashboard = () => {
     });
   };
 
+  let handelUploadFile = async () => {
+    await uploadBytes(storageUploadRef, file.file);
+    await getDownloadURL(storageUploadRef).then((result) => {
+      setVisible(false);
+      setMsg({
+        ...msg,
+        senderName: user.displayName,
+        imgUrl: result,
+      });
+    });
+  };
+
   let handelSendMessage = async (e) => {
     e.preventDefault();
     console.log(msg);
-    await Axios.post(`${apiBaseUrl}/api/sendMessage`, msg).then((result) => {
-      // console.log(result.data);
-      setMsg({
-        ...msg,
-        messageContent: "",
-      });
-      scrollDown();
-    });
-    // console.log(msg)
+    await Axios.post(`${apiBaseUrl}/api/sendMessage`, msg)
+      .then((result) => {
+        setMsg({
+          ...msg,
+          messageContent: "",
+        });
+        scrollDown();
+      })
+      .then(() => handelGetMessages());
   };
 
   let scrollDown = () => {
@@ -63,6 +65,8 @@ const Dashboard = () => {
   };
 
   scrollDown();
+
+  console.log(msg?.imgUrl);
 
   return (
     <div className=" h-full w-full md:w-[500px] md:border">
@@ -92,22 +96,77 @@ const Dashboard = () => {
             </div>
           );
         })}
-
+        <div>
+          <Modal
+            scroll
+            width="300px"
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
+            {...bindings}
+          >
+            <div className="h-[200px] flex items-center justify-center">
+              <div className="flex items-center flex-col gap-3">
+                {file ? (
+                  <div>
+                    <img
+                      src={file.source}
+                      alt="preview"
+                      height="200px"
+                      width="200px"
+                    />
+                  </div>
+                ) : null}
+                {file ? (
+                  <button
+                    onClick={() => {
+                      handelUploadFile();
+                    }}
+                  >
+                    Upload File
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      selectFile();
+                    }}
+                  >
+                    Select File
+                  </button>
+                )}
+              </div>
+            </div>
+          </Modal>
+        </div>
+        <div>
+          {file && (
+            <div>
+              <img
+                src={file.source}
+                alt="preview"
+                height="200px"
+                width="200px"
+              />
+            </div>
+          )}
+        </div>
         <div ref={bottomRef} />
       </div>
       <form onSubmit={handelSendMessage}>
         <div className=" h-[10%] flex items-center justify-between gap-5 custom-border-2 py-2 px-5">
-          <input type="file" onChange={(e) => handleFileChange(e)} />
-          <SentimentSatisfiedOutlinedIcon />
+          <SentimentSatisfiedOutlinedIcon
+            onClick={() => {
+              handelGetMessages();
+            }}
+          />
           <input
             value={msg?.messageContent}
             onChange={(e) => handelInputChange(e)}
             id="msgInput"
             type="text"
             placeholder="Start typing..."
-            className="outline-none w-full h-full "
+            className="outline-none w-full h-full"
           />
-          <AttachmentOutlinedIcon onClick={() => handelUploadFile()} />
+          <AttachmentOutlinedIcon onClick={() => setVisible(true)} />
           <button type="submit">
             <SendOutlinedIcon />
           </button>

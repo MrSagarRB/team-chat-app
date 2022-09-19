@@ -26,7 +26,7 @@ const Home = () => {
           Login With Google
         </button>
       ) : (
-        "Loding"
+        <img src="loader1.gif" />
       )}
     </div>
   );
